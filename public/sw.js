@@ -1,4 +1,4 @@
-const CACHE='one-step-shell-v1';
+const CACHE='one-step-shell-v2';
 const SHELL=['./','./index.html','./style.css','./app.js','./config.js','./icon.svg','./icon-192.png','./icon-512.png','./manifest.webmanifest'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('one-step-shell-')&&k!==CACHE).map(k=>caches.delete(k))))));

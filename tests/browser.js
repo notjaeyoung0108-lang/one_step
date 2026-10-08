@@ -51,7 +51,7 @@ try{
   await call('/api/mutate',{action:'create',revision:after.revision,event:{title:'<img src=x onerror=alert(1)>',start:currentDate+'T01:00',end:currentDate+'T02:00',category:'생활'}});
   await page.setViewportSize({width:1440,height:1000});await page.locator('#refresh').click();await page.getByText('<img src=x onerror=alert(1)>',{exact:true}).waitFor();
   assert.equal(await page.locator('img[onerror]').count(),0);
-  await page.evaluate(()=>document.fonts.ready);assert.equal(await page.evaluate(()=>document.fonts.check('20px Juache')&&document.fonts.check('20px IsYun')),true);
+  await page.evaluate(()=>document.fonts.ready);assert.equal(await page.evaluate(()=>document.fonts.check('20px Juache')&&document.fonts.check('20px OngleipKonkon')),true);
   await page.screenshot({path:'test-results/desktop-today.png',fullPage:true});
   await page.locator('#lock').click();await page.getByRole('heading',{name:'나만의 일정 노트 열기'}).waitFor();
   assert.equal(await page.evaluate(()=>sessionStorage.getItem('one-step.auth.v1')),null);

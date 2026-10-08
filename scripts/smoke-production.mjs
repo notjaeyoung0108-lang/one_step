@@ -12,7 +12,7 @@ try{
   await page.goto(site);
   await page.getByRole('heading',{name:'나만의 일정 노트 열기'}).waitFor();
   await page.evaluate(()=>document.fonts.ready);
-  assert.ok(await page.evaluate(()=>document.fonts.check('20px Juache')&&document.fonts.check('20px IsYun')));
+  assert.ok(await page.evaluate(()=>document.fonts.check('20px Juache')&&document.fonts.check('20px OngleipKonkon')));
   await page.screenshot({path:'test-results/live-gate.png',fullPage:true});
   if(process.argv.includes('--gate-only')){console.log('PASS: published mobile gate and requested fonts.');}
   else{

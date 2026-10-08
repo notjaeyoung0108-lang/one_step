@@ -4,7 +4,7 @@
 
 ## 구성
 
-- `public/`: GitHub Pages에 공개하는 화면. 제목은 **Juache(주아체)**, 본문은 **IsYun(이서윤체)**.
+- `public/`: GitHub Pages에 공개하는 화면. 제목은 **Juache(주아체)**, 본문은 **OngleipKonkon(온글잎 콘콘체)**.
 - `server/`: Cloudflare Worker + D1. 모든 일정 조회·수정·AI 요청은 전용 Bearer 토큰으로 보호.
 - `server/core.js`: 서울 시간 계산, 입력 검증, 충돌 검사, 빈 시간 배치 알고리즘.
 - OpenAI Responses API의 Structured Outputs로 목표·분량·기간을 추출. 기본 모델 `gpt-4.1-mini`, `store: false`.
