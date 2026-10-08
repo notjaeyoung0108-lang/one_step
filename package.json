@@ -1,0 +1,20 @@
+{
+  "name": "one-step-planner",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "dev": "wrangler dev --port 8787",
+    "preview": "node scripts/preview.js",
+    "deploy": "wrangler deploy",
+    "test:browser": "node tests/browser.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "wrangler": "^4.0.0"
+  },
+  "overrides": {
+    "sharp": "0.35.5"
+  }
+}

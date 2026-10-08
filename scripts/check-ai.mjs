@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {parseEnv} from 'node:util';
+import {extractIntent} from '../server/worker.js';
+import {defaults,localISO,schedule} from '../server/core.js';
+const env=parseEnv(await readFile(new URL('../.dev.vars',import.meta.url),'utf8'));
+env.OPENAI_MODEL=process.env.OPENAI_MODEL||'gpt-4.1-mini';
+const now=Date.now(),first=localISO(now+86400000).slice(0,10),last=localISO(now+4*86400000).slice(0,10);
+const state={events:[],preferences:defaults};
+const result=await extractIntent(`${first}부터 ${last}까지 전공 공부 6시간을 빈 시간에 나눠 넣어 줘. 한 번에 1시간씩, 오전 9시부터 오후 10시 사이에 해 줘.`,state,env,now);
+console.log(JSON.stringify(result,null,2));
+console.log('Placed:',schedule(result,state,now).events.length);

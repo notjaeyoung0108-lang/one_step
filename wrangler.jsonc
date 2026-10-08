@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "one-step-planner-api",
+  "main": "server/worker.js",
+  "compatibility_date": "2026-10-08",
+  "workers_dev": true,
+  "vars": {
+    "ALLOWED_ORIGINS": "https://notjaeyoung0108-lang.github.io,http://localhost:4173,http://127.0.0.1:4173",
+    "OPENAI_MODEL": "gpt-4.1-mini",
+    "AI_DAILY_LIMIT": "30"
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "one-step-planner",
+    "database_id": "93b31c0a-40e9-451c-9e55-637cee4dc325"
+  }]
+}
