@@ -30,7 +30,8 @@ export function event(input, id = crypto.randomUUID()) {
   if (end <= start || end-start > 24*3600000) throw new AppError('일정 길이는 1분 이상, 24시간 이내로 입력해 주세요.');
   if (!categories.includes(input.category)) throw new AppError('분류를 선택해 주세요.');
   return { id, title:cleanText(input.title), start:input.start, end:input.end, category:input.category,
-    firstStep: typeof input.firstStep === 'string' ? input.firstStep.slice(0,200) : '', done:input.done === true, source:input.source === 'ai' ? 'ai' : 'manual' };
+    firstStep: typeof input.firstStep === 'string' ? input.firstStep.slice(0,200) : '', done:input.done === true,
+    source:input.source === 'ai' ? 'ai' : 'manual', flexible:input.flexible === true };
 }
 export function overlap(a,b,gap=0) {
   return parseTime(a.start) < parseTime(b.end)+gap*60000 && parseTime(a.end)+gap*60000 > parseTime(b.start);
@@ -66,7 +67,7 @@ export function schedule(raw, state, now = Date.now()) {
   for (const t of tasks) {
     if (t.kind === 'fixed') {
       const start = parseTime(t.fixedStart);
-      const e = event({ ...t, start:t.fixedStart, end:localISO(start+t.totalMinutes*60000), source:'ai' });
+      const e = event({ ...t, start:t.fixedStart, end:localISO(start+t.totalMinutes*60000), source:'ai', flexible:false });
       if (occupied.some(o=>overlap(e,o))) { unplaced.push({title:t.title,minutes:t.totalMinutes,reason:'정해진 시간이 기존 일정과 겹쳐요.'}); continue; }
       occupied.push(e); events.push(e); continue;
     }
@@ -81,7 +82,8 @@ export function schedule(raw, state, now = Date.now()) {
         const end=day+Math.min(minutes(prefs.dayEnd),minutes(t.preferredEnd))*60000;
         const dayEvents=occupied.filter(e=>parseTime(e.start)<day+86400000 && parseTime(e.end)>day);
         const load=dayEvents.reduce((n,e)=>n+(Math.min(parseTime(e.end),day+86400000)-Math.max(parseTime(e.start),day))/60000,0);
-        if(load+length>prefs.dailyLimit) continue;
+        const flexibleLoad=dayEvents.filter(e=>e.flexible).reduce((n,e)=>n+(Math.min(parseTime(e.end),day+86400000)-Math.max(parseTime(e.start),day))/60000,0);
+        if(flexibleLoad+length>prefs.dailyLimit) continue;
         for(let s=start;s+length*60000<=end;s+=5*60000) {
           const e={start:localISO(s),end:localISO(s+length*60000)};
           if (!occupied.some(o=>overlap(e,o,prefs.breakMinutes))) { candidates.push({ ...e,load }); break; }
@@ -89,7 +91,7 @@ export function schedule(raw, state, now = Date.now()) {
       }
       candidates.sort((a,b)=>a.load-b.load || a.start.localeCompare(b.start));
       if(!candidates.length) break;
-      const e=event({...t,...candidates[0],source:'ai'});
+      const e=event({...t,...candidates[0],source:'ai',flexible:true});
       occupied.push(e); events.push(e); remaining-=length;
     }
     if(remaining) unplaced.push({title:t.title,minutes:remaining,reason:'가능 시간·휴식 간격·하루 최대 시간을 만족하는 빈 시간이 부족해요.'});

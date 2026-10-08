@@ -42,3 +42,9 @@ test('invalid preferences and task output are rejected',()=>{
   assert.throws(()=>preferences({...defaults,days:[]}));assert.throws(()=>preferences({...defaults,dayStart:'22:00',dayEnd:'09:00'}));
   for(const p of [{totalMinutes:-1},{sessionMinutes:0},{deadline:'2026-12-31'},{daysOfWeek:[8]},{preferredStart:'25:00'}])assert.throws(()=>schedule({tasks:[{...base,...p}]},state(),now));
 });
+test('fixed work hours occupy time but do not consume the flexible-study limit',()=>{
+  const job=event({title:'근무',start:'2026-10-08T09:00',end:'2026-10-08T18:00',category:'생활'});
+  const plan=schedule({tasks:[{...base,totalMinutes:180,deadline:'2026-10-08'}]},state([job],{dailyLimit:120}),now);
+  assert.equal(plan.events.length,2);assert.equal(plan.unplaced[0].minutes,60);
+  assert.equal(plan.events[0].start,'2026-10-08T18:10');
+});

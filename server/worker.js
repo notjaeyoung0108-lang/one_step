@@ -77,13 +77,13 @@ async function route(request,env) {
     const state=await readState(db);
     if(input.revision!==state.revision) throw new AppError('일정이 변경되었어요. 새로고침 후 다시 시도해 주세요.',409);
     if(input.action==='preferences') state.preferences=preferences(input.preferences);
-    else if(input.action==='create') {const e=event(input.event);checkConflicts([e],state.events);state.events.push(e);}
+    else if(input.action==='create') {const e=event(input.event);e.source='manual';e.flexible=false;checkConflicts([e],state.events);state.events.push(e);}
     else {
       const index=state.events.findIndex(e=>e.id===input.id);
       if(index<0) throw new AppError('일정을 찾을 수 없어요.',404);
       if(input.action==='delete') state.events.splice(index,1);
       else if(input.action==='toggle') state.events[index].done=!state.events[index].done;
-      else if(input.action==='update') {const e=event({...input.event,done:state.events[index].done,source:state.events[index].source},input.id);checkConflicts([e],state.events.filter(x=>x.id!==input.id));state.events[index]=e;}
+      else if(input.action==='update') {const e=event({...input.event,done:state.events[index].done,source:state.events[index].source,flexible:state.events[index].flexible},input.id);checkConflicts([e],state.events.filter(x=>x.id!==input.id));state.events[index]=e;}
       else throw new AppError('지원하지 않는 동작이에요.');
     }
     return writeState(db,state,state.revision);
